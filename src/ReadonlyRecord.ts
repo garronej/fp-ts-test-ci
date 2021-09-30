@@ -76,8 +76,10 @@ export const isEmpty = <A>(r: ReadonlyRecord<string, A>): boolean => {
   return true
 }
 
-const keys_ = (O: Ord<string>) => <K extends string>(r: ReadonlyRecord<K, unknown>): ReadonlyArray<K> =>
-  (Object.keys(r) as any).sort(O.compare)
+const keys_ =
+  (O: Ord<string>) =>
+  <K extends string>(r: ReadonlyRecord<K, unknown>): ReadonlyArray<K> =>
+    (Object.keys(r) as any).sort(O.compare)
 
 /**
  * @since 2.5.0
@@ -119,13 +121,14 @@ export function collect<A, B>(
     return collect(S.Ord)(O)
   }
   const keysO = keys_(O)
-  return <K extends string, A, B>(f: (k: K, a: A) => B) => (r: ReadonlyRecord<K, A>) => {
-    const out: Array<B> = []
-    for (const key of keysO(r)) {
-      out.push(f(key, r[key]))
+  return <K extends string, A, B>(f: (k: K, a: A) => B) =>
+    (r: ReadonlyRecord<K, A>) => {
+      const out: Array<B> = []
+      for (const key of keysO(r)) {
+        out.push(f(key, r[key]))
+      }
+      return out
     }
-    return out
-  }
 }
 
 /**
@@ -163,14 +166,16 @@ export function toUnfoldable<F>(U: Unfoldable<F>): <A>(r: ReadonlyRecord<string,
  * @category combinators
  * @since 2.10.0
  */
-export const upsertAt = <A>(k: string, a: A) => (r: ReadonlyRecord<string, A>): ReadonlyRecord<string, A> => {
-  if (_.has.call(r, k) && r[k] === a) {
-    return r
+export const upsertAt =
+  <A>(k: string, a: A) =>
+  (r: ReadonlyRecord<string, A>): ReadonlyRecord<string, A> => {
+    if (_.has.call(r, k) && r[k] === a) {
+      return r
+    }
+    const out: Record<string, A> = Object.assign({}, r)
+    out[k] = a
+    return out
   }
-  const out: Record<string, A> = Object.assign({}, r)
-  out[k] = a
-  return out
-}
 
 /**
  * Test whether or not a key exists in a `ReadonlyRecord`.
@@ -204,37 +209,37 @@ export function deleteAt(k: string): <A>(r: ReadonlyRecord<string, A>) => Readon
 /**
  * @since 2.5.0
  */
-export const updateAt = <A>(k: string, a: A) => <K extends string>(
-  r: ReadonlyRecord<K, A>
-): Option<ReadonlyRecord<K, A>> => {
-  if (!has(k, r)) {
-    return _.none
+export const updateAt =
+  <A>(k: string, a: A) =>
+  <K extends string>(r: ReadonlyRecord<K, A>): Option<ReadonlyRecord<K, A>> => {
+    if (!has(k, r)) {
+      return _.none
+    }
+    if (r[k] === a) {
+      return _.some(r)
+    }
+    const out: Record<K, A> = Object.assign({}, r)
+    out[k] = a
+    return _.some(out)
   }
-  if (r[k] === a) {
-    return _.some(r)
-  }
-  const out: Record<K, A> = Object.assign({}, r)
-  out[k] = a
-  return _.some(out)
-}
 
 /**
  * @since 2.5.0
  */
-export const modifyAt = <A>(k: string, f: (a: A) => A) => <K extends string>(
-  r: ReadonlyRecord<K, A>
-): Option<ReadonlyRecord<K, A>> => {
-  if (!has(k, r)) {
-    return _.none
+export const modifyAt =
+  <A>(k: string, f: (a: A) => A) =>
+  <K extends string>(r: ReadonlyRecord<K, A>): Option<ReadonlyRecord<K, A>> => {
+    if (!has(k, r)) {
+      return _.none
+    }
+    const next = f(r[k])
+    if (next === r[k]) {
+      return _.some(r)
+    }
+    const out: Record<K, A> = Object.assign({}, r)
+    out[k] = next
+    return _.some(out)
   }
-  const next = f(r[k])
-  if (next === r[k]) {
-    return _.some(r)
-  }
-  const out: Record<K, A> = Object.assign({}, r)
-  out[k] = next
-  return _.some(out)
-}
 
 /**
  * Delete a key and value from a `ReadonlyRecord`, returning the value as well as the subsequent `ReadonlyRecord`.
@@ -260,9 +265,7 @@ export function pop(k: string): <A>(r: ReadonlyRecord<string, A>) => Option<read
  *
  * @since 2.5.0
  */
-export function isSubrecord<A>(
-  E: Eq<A>
-): {
+export function isSubrecord<A>(E: Eq<A>): {
   (that: ReadonlyRecord<string, A>): (me: ReadonlyRecord<string, A>) => boolean
   (me: ReadonlyRecord<string, A>, that: ReadonlyRecord<string, A>): boolean
 }
@@ -400,16 +403,18 @@ export function foldMapWithIndex<M>(
   | (<A>(f: (k: string, a: A) => M) => (fa: ReadonlyRecord<string, A>) => M) {
   if ('compare' in O) {
     const keysO = keys_(O)
-    return (M: Monoid<M>) => <A>(f: (k: string, a: A) => M) => (fa: ReadonlyRecord<string, A>) => {
-      let out: M = M.empty
-      const ks = keysO(fa)
-      const len = ks.length
-      for (let i = 0; i < len; i++) {
-        const k = ks[i]
-        out = M.concat(out, f(k, fa[k]))
+    return (M: Monoid<M>) =>
+      <A>(f: (k: string, a: A) => M) =>
+      (fa: ReadonlyRecord<string, A>) => {
+        let out: M = M.empty
+        const ks = keysO(fa)
+        const len = ks.length
+        for (let i = 0; i < len; i++) {
+          const k = ks[i]
+          out = M.concat(out, f(k, fa[k]))
+        }
+        return out
       }
-      return out
-    }
   }
   return foldMapWithIndex(S.Ord)(O)
 }
@@ -826,9 +831,7 @@ export function some<A>(predicate: (a: A) => boolean): (r: ReadonlyRecord<string
 /**
  * @since 2.5.0
  */
-export function elem<A>(
-  E: Eq<A>
-): {
+export function elem<A>(E: Eq<A>): {
   (a: A): (fa: ReadonlyRecord<string, A>) => boolean
   (a: A, fa: ReadonlyRecord<string, A>): boolean
 }
@@ -853,76 +856,78 @@ export function elem<A>(
  * @category combinators
  * @since 2.11.0
  */
-export const union = <A>(M: Magma<A>) => (second: ReadonlyRecord<string, A>) => (
-  first: ReadonlyRecord<string, A>
-): ReadonlyRecord<string, A> => {
-  if (isEmpty(first)) {
-    return second
-  }
-  if (isEmpty(second)) {
-    return first
-  }
-  const out: Record<string, A> = {}
-  for (const k in first) {
-    if (has(k, second)) {
-      out[k] = M.concat(first[k], second[k])
-    } else {
-      out[k] = first[k]
+export const union =
+  <A>(M: Magma<A>) =>
+  (second: ReadonlyRecord<string, A>) =>
+  (first: ReadonlyRecord<string, A>): ReadonlyRecord<string, A> => {
+    if (isEmpty(first)) {
+      return second
     }
-  }
-  for (const k in second) {
-    if (!has(k, out)) {
-      out[k] = second[k]
+    if (isEmpty(second)) {
+      return first
     }
+    const out: Record<string, A> = {}
+    for (const k in first) {
+      if (has(k, second)) {
+        out[k] = M.concat(first[k], second[k])
+      } else {
+        out[k] = first[k]
+      }
+    }
+    for (const k in second) {
+      if (!has(k, out)) {
+        out[k] = second[k]
+      }
+    }
+    return out
   }
-  return out
-}
 
 /**
  * @category combinators
  * @since 2.11.0
  */
-export const intersection = <A>(M: Magma<A>) => (second: ReadonlyRecord<string, A>) => (
-  first: ReadonlyRecord<string, A>
-): ReadonlyRecord<string, A> => {
-  if (isEmpty(first) || isEmpty(second)) {
-    return empty
-  }
-  const out: Record<string, A> = {}
-  for (const k in first) {
-    if (has(k, second)) {
-      out[k] = M.concat(first[k], second[k])
+export const intersection =
+  <A>(M: Magma<A>) =>
+  (second: ReadonlyRecord<string, A>) =>
+  (first: ReadonlyRecord<string, A>): ReadonlyRecord<string, A> => {
+    if (isEmpty(first) || isEmpty(second)) {
+      return empty
     }
+    const out: Record<string, A> = {}
+    for (const k in first) {
+      if (has(k, second)) {
+        out[k] = M.concat(first[k], second[k])
+      }
+    }
+    return out
   }
-  return out
-}
 
 /**
  * @category combinators
  * @since 2.11.0
  */
-export const difference = <A>(second: ReadonlyRecord<string, A>) => (
-  first: ReadonlyRecord<string, A>
-): ReadonlyRecord<string, A> => {
-  if (isEmpty(first)) {
-    return second
-  }
-  if (isEmpty(second)) {
-    return first
-  }
-  const out: Record<string, A> = {}
-  for (const k in first) {
-    if (!has(k, second)) {
-      out[k] = first[k]
+export const difference =
+  <A>(second: ReadonlyRecord<string, A>) =>
+  (first: ReadonlyRecord<string, A>): ReadonlyRecord<string, A> => {
+    if (isEmpty(first)) {
+      return second
     }
-  }
-  for (const k in second) {
-    if (!has(k, first)) {
-      out[k] = second[k]
+    if (isEmpty(second)) {
+      return first
     }
+    const out: Record<string, A> = {}
+    for (const k in first) {
+      if (!has(k, second)) {
+        out[k] = first[k]
+      }
+    }
+    for (const k in second) {
+      if (!has(k, first)) {
+        out[k] = second[k]
+      }
+    }
+    return out
   }
-  return out
-}
 
 // -------------------------------------------------------------------------------------
 // non-pipeables
@@ -1030,28 +1035,33 @@ export const _sequence = (
     return (ta) => traverseOF(ta, identity)
   }
 }
-const _traverseWithIndex = (O: Ord<string>) => <F>(
-  F: Applicative<F>
-): (<A, B>(ta: ReadonlyRecord<string, A>, f: (k: string, a: A) => HKT<F, B>) => HKT<F, ReadonlyRecord<string, B>>) => {
-  const keysO = keys_(O)
-  return <A, B>(ta: ReadonlyRecord<string, A>, f: (k: string, a: A) => HKT<F, B>) => {
-    const ks = keysO(ta)
-    if (ks.length === 0) {
-      return F.of(empty)
+const _traverseWithIndex =
+  (O: Ord<string>) =>
+  <F>(
+    F: Applicative<F>
+  ): (<A, B>(
+    ta: ReadonlyRecord<string, A>,
+    f: (k: string, a: A) => HKT<F, B>
+  ) => HKT<F, ReadonlyRecord<string, B>>) => {
+    const keysO = keys_(O)
+    return <A, B>(ta: ReadonlyRecord<string, A>, f: (k: string, a: A) => HKT<F, B>) => {
+      const ks = keysO(ta)
+      if (ks.length === 0) {
+        return F.of(empty)
+      }
+      let fr: HKT<F, Record<string, B>> = F.of({})
+      for (const key of ks) {
+        fr = F.ap(
+          F.map(fr, (r) => (b: B) => {
+            r[key] = b
+            return r
+          }),
+          f(key, ta[key])
+        )
+      }
+      return fr
     }
-    let fr: HKT<F, Record<string, B>> = F.of({})
-    for (const key of ks) {
-      fr = F.ap(
-        F.map(fr, (r) => (b: B) => {
-          r[key] = b
-          return r
-        }),
-        f(key, ta[key])
-      )
-    }
-    return fr
   }
-}
 
 // -------------------------------------------------------------------------------------
 // type class members
@@ -1072,9 +1082,8 @@ export const filter: {
  * @category Filterable
  * @since 2.5.0
  */
-export const filterMap: <A, B>(
-  f: (a: A) => Option<B>
-) => (fa: ReadonlyRecord<string, A>) => ReadonlyRecord<string, B> = (f) => filterMapWithIndex((_, a) => f(a))
+export const filterMap: <A, B>(f: (a: A) => Option<B>) => (fa: ReadonlyRecord<string, A>) => ReadonlyRecord<string, B> =
+  (f) => filterMapWithIndex((_, a) => f(a))
 
 /**
  * @category Filterable

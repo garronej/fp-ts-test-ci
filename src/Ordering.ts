@@ -23,8 +23,10 @@ export type Ordering = -1 | 0 | 1
  * @category destructors
  * @since 2.10.0
  */
-export const match = <A>(onLessThan: () => A, onEqual: () => A, onGreaterThan: () => A) => (o: Ordering): A =>
-  o === -1 ? onLessThan() : o === 0 ? onEqual() : onGreaterThan()
+export const match =
+  <A>(onLessThan: () => A, onEqual: () => A, onGreaterThan: () => A) =>
+  (o: Ordering): A =>
+    o === -1 ? onLessThan() : o === 0 ? onEqual() : onGreaterThan()
 
 // -------------------------------------------------------------------------------------
 // combinators

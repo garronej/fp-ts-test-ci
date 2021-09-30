@@ -349,9 +349,8 @@ export const asksReaderTaskEitherW: <R1, R2, E, A>(
  * @category combinators
  * @since 2.11.0
  */
-export const asksReaderTaskEither: <R, E, A>(
-  f: (r: R) => ReaderTaskEither<R, E, A>
-) => ReaderTaskEither<R, E, A> = asksReaderTaskEitherW
+export const asksReaderTaskEither: <R, E, A>(f: (r: R) => ReaderTaskEither<R, E, A>) => ReaderTaskEither<R, E, A> =
+  asksReaderTaskEitherW
 
 /**
  * @category combinators
@@ -651,9 +650,8 @@ export const flattenW: <R1, E1, R2, E2, A>(
  * @category combinators
  * @since 2.0.0
  */
-export const flatten: <R, E, A>(
-  mma: ReaderTaskEither<R, E, ReaderTaskEither<R, E, A>>
-) => ReaderTaskEither<R, E, A> = flattenW
+export const flatten: <R, E, A>(mma: ReaderTaskEither<R, E, ReaderTaskEither<R, E, A>>) => ReaderTaskEither<R, E, A> =
+  flattenW
 
 /**
  * Identifies an associative operation on a type constructor. It is similar to `Semigroup`, except that it applies to
@@ -1061,9 +1059,12 @@ export const chainFirstReaderKW: <A, R1, B>(
  * @category combinators
  * @since 2.11.0
  */
-export const fromReaderTaskK = <A extends ReadonlyArray<unknown>, R, B>(
-  f: (...a: A) => ReaderTask<R, B>
-): (<E = never>(...a: A) => ReaderTaskEither<R, E, B>) => (...a) => rightReaderTask(f(...a))
+export const fromReaderTaskK =
+  <A extends ReadonlyArray<unknown>, R, B>(
+    f: (...a: A) => ReaderTask<R, B>
+  ): (<E = never>(...a: A) => ReaderTaskEither<R, E, B>) =>
+  (...a) =>
+    rightReaderTask(f(...a))
 
 /**
  * Less strict version of [`chainReaderTaskK`](#chainreadertaskk).

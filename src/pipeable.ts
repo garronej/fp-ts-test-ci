@@ -1558,11 +1558,13 @@ export function pipeable<F, I>(I: { readonly URI: F } & I): Record<string, unkno
       )
     r.ap = ap
     r.apFirst = apFirst
-    r.apSecond = <B>(fb: HKT<F, B>) => <A>(fa: HKT<F, A>): HKT<F, B> =>
-      I.ap(
-        I.map(fa, () => (b: B) => b),
-        fb
-      )
+    r.apSecond =
+      <B>(fb: HKT<F, B>) =>
+      <A>(fa: HKT<F, A>): HKT<F, B> =>
+        I.ap(
+          I.map(fa, () => (b: B) => b),
+          fb
+        )
   }
   if (isChain<F>(I)) {
     const chain: PipeableChain<F>['chain'] = (f) => (ma) => I.chain(ma, f)
@@ -1617,11 +1619,15 @@ export function pipeable<F, I>(I: { readonly URI: F } & I): Record<string, unkno
     r.separate = I.separate
   }
   if (isFilterable<F>(I)) {
-    const filter: PipeableFilterable<F>['filter'] = <A>(predicate: Predicate<A>) => (fa: HKT<F, A>) =>
-      I.filter(fa, predicate)
+    const filter: PipeableFilterable<F>['filter'] =
+      <A>(predicate: Predicate<A>) =>
+      (fa: HKT<F, A>) =>
+        I.filter(fa, predicate)
     const filterMap: PipeableFilterable<F>['filterMap'] = (f) => (fa) => I.filterMap(fa, f)
-    const partition: PipeableFilterable<F>['partition'] = <A>(predicate: Predicate<A>) => (fa: HKT<F, A>) =>
-      I.partition(fa, predicate)
+    const partition: PipeableFilterable<F>['partition'] =
+      <A>(predicate: Predicate<A>) =>
+      (fa: HKT<F, A>) =>
+        I.partition(fa, predicate)
     const partitionMap: PipeableFilterable<F>['partitionMap'] = (f) => (fa) => I.partitionMap(fa, f)
     r.filter = filter
     r.filterMap = filterMap
@@ -1629,14 +1635,16 @@ export function pipeable<F, I>(I: { readonly URI: F } & I): Record<string, unkno
     r.partitionMap = partitionMap
   }
   if (isFilterableWithIndex<F>(I)) {
-    const filterWithIndex: PipeableFilterableWithIndex<F, unknown>['filterWithIndex'] = <A>(
-      predicateWithIndex: PredicateWithIndex<unknown, A>
-    ) => (fa: HKT<F, A>) => I.filterWithIndex(fa, predicateWithIndex)
+    const filterWithIndex: PipeableFilterableWithIndex<F, unknown>['filterWithIndex'] =
+      <A>(predicateWithIndex: PredicateWithIndex<unknown, A>) =>
+      (fa: HKT<F, A>) =>
+        I.filterWithIndex(fa, predicateWithIndex)
     const filterMapWithIndex: PipeableFilterableWithIndex<F, unknown>['filterMapWithIndex'] = (f) => (fa) =>
       I.filterMapWithIndex(fa, f)
-    const partitionWithIndex: PipeableFilterableWithIndex<F, unknown>['partitionWithIndex'] = <A>(
-      predicateWithIndex: PredicateWithIndex<unknown, A>
-    ) => (fa: HKT<F, A>) => I.partitionWithIndex(fa, predicateWithIndex)
+    const partitionWithIndex: PipeableFilterableWithIndex<F, unknown>['partitionWithIndex'] =
+      <A>(predicateWithIndex: PredicateWithIndex<unknown, A>) =>
+      (fa: HKT<F, A>) =>
+        I.partitionWithIndex(fa, predicateWithIndex)
     const partitionMapWithIndex: PipeableFilterableWithIndex<F, unknown>['partitionMapWithIndex'] = (f) => (fa) =>
       I.partitionMapWithIndex(fa, f)
     r.filterWithIndex = filterWithIndex
@@ -1657,14 +1665,14 @@ export function pipeable<F, I>(I: { readonly URI: F } & I): Record<string, unkno
       ma._tag === 'None' ? I.throwError(onNone()) : I.of(ma.value)
     const fromEither: PipeableMonadThrow<F>['fromEither'] = (ma) =>
       ma._tag === 'Left' ? I.throwError(ma.left) : I.of(ma.right)
-    const fromPredicate: PipeableMonadThrow<F>['fromPredicate'] = <E, A>(
-      predicate: Predicate<A>,
-      onFalse: (a: A) => E
-    ) => (a: A) => (predicate(a) ? I.of(a) : I.throwError(onFalse(a)))
-    const filterOrElse: PipeableMonadThrow<F>['filterOrElse'] = <E, A>(
-      predicate: Predicate<A>,
-      onFalse: (a: A) => E
-    ) => (ma: HKT<F, A>) => I.chain(ma, (a) => (predicate(a) ? I.of(a) : I.throwError(onFalse(a))))
+    const fromPredicate: PipeableMonadThrow<F>['fromPredicate'] =
+      <E, A>(predicate: Predicate<A>, onFalse: (a: A) => E) =>
+      (a: A) =>
+        predicate(a) ? I.of(a) : I.throwError(onFalse(a))
+    const filterOrElse: PipeableMonadThrow<F>['filterOrElse'] =
+      <E, A>(predicate: Predicate<A>, onFalse: (a: A) => E) =>
+      (ma: HKT<F, A>) =>
+        I.chain(ma, (a) => (predicate(a) ? I.of(a) : I.throwError(onFalse(a))))
     r.fromOption = fromOption
     r.fromEither = fromEither
     r.fromPredicate = fromPredicate

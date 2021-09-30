@@ -137,10 +137,8 @@ export const match: <B, A>(onNone: () => B, onSome: (a: A) => B) => (ma: TaskOpt
  * @category destructors
  * @since 2.10.0
  */
-export const matchW: <B, A, C>(
-  onNone: () => B,
-  onSome: (a: A) => C
-) => (ma: TaskOption<A>) => Task<B | C> = match as any
+export const matchW: <B, A, C>(onNone: () => B, onSome: (a: A) => C) => (ma: TaskOption<A>) => Task<B | C> =
+  match as any
 
 /**
  * @category destructors
@@ -215,11 +213,13 @@ export const fromNullable: <A>(a: A) => TaskOption<NonNullable<A>> =
  * @category interop
  * @since 2.10.0
  */
-export const tryCatch = <A>(f: Lazy<Promise<A>>): TaskOption<A> => () =>
-  f().then(
-    (a) => O.some(a),
-    () => O.none
-  )
+export const tryCatch =
+  <A>(f: Lazy<Promise<A>>): TaskOption<A> =>
+  () =>
+    f().then(
+      (a) => O.some(a),
+      () => O.none
+    )
 
 /**
  * Converts a function returning a `Promise` to one returning a `TaskOption`.
@@ -227,9 +227,10 @@ export const tryCatch = <A>(f: Lazy<Promise<A>>): TaskOption<A> => () =>
  * @category interop
  * @since 2.10.0
  */
-export const tryCatchK = <A extends ReadonlyArray<unknown>, B>(
-  f: (...a: A) => Promise<B>
-): ((...a: A) => TaskOption<B>) => (...a) => tryCatch(() => f(...a))
+export const tryCatchK =
+  <A extends ReadonlyArray<unknown>, B>(f: (...a: A) => Promise<B>): ((...a: A) => TaskOption<B>) =>
+  (...a) =>
+    tryCatch(() => f(...a))
 
 /**
  * @category interop
@@ -831,24 +832,25 @@ export const traverseReadonlyArrayWithIndex = <A, B>(
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndexSeq = <A, B>(f: (index: number, a: A) => TaskOption<B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): TaskOption<ReadonlyNonEmptyArray<B>> => () =>
-  _.tail(as).reduce<Promise<Option<NonEmptyArray<B>>>>(
-    (acc, a, i) =>
-      acc.then((obs) =>
-        _.isNone(obs)
-          ? acc
-          : f(i + 1, a)().then((ob) => {
-              if (_.isNone(ob)) {
-                return ob
-              }
-              obs.value.push(ob.value)
-              return obs
-            })
-      ),
-    f(0, _.head(as))().then(O.map(_.singleton))
-  )
+export const traverseReadonlyNonEmptyArrayWithIndexSeq =
+  <A, B>(f: (index: number, a: A) => TaskOption<B>) =>
+  (as: ReadonlyNonEmptyArray<A>): TaskOption<ReadonlyNonEmptyArray<B>> =>
+  () =>
+    _.tail(as).reduce<Promise<Option<NonEmptyArray<B>>>>(
+      (acc, a, i) =>
+        acc.then((obs) =>
+          _.isNone(obs)
+            ? acc
+            : f(i + 1, a)().then((ob) => {
+                if (_.isNone(ob)) {
+                  return ob
+                }
+                obs.value.push(ob.value)
+                return obs
+              })
+        ),
+      f(0, _.head(as))().then(O.map(_.singleton))
+    )
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(ApplicativeSeq)`.

@@ -56,7 +56,7 @@ describe('function', () => {
   })
 
   it('absurd', () => {
-    assert.throws(() => _.absurd<string>((null as any) as never))
+    assert.throws(() => _.absurd<string>(null as any as never))
   })
 
   it('flow', () => {

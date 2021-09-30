@@ -135,10 +135,8 @@ export const match: <E, B, A>(onLeft: (e: E) => B, onRight: (a: A) => B) => (ma:
  * @category destructors
  * @since 2.10.0
  */
-export const matchW: <E, B, A, C>(
-  onLeft: (e: E) => B,
-  onRight: (a: A) => C
-) => (ma: IOEither<E, A>) => IO<B | C> = match as any
+export const matchW: <E, B, A, C>(onLeft: (e: E) => B, onRight: (a: A) => C) => (ma: IOEither<E, A>) => IO<B | C> =
+  match as any
 
 /**
  * @category destructors
@@ -203,8 +201,10 @@ export const getOrElseW: <E, B>(onLeft: (e: E) => IO<B>) => <A>(ma: IOEither<E, 
  * @category interop
  * @since 2.0.0
  */
-export const tryCatch = <E, A>(f: Lazy<A>, onThrow: (reason: unknown) => E): IOEither<E, A> => () =>
-  E.tryCatch(f, onThrow)
+export const tryCatch =
+  <E, A>(f: Lazy<A>, onThrow: (reason: unknown) => E): IOEither<E, A> =>
+  () =>
+    E.tryCatch(f, onThrow)
 
 /**
  * Converts a function that may throw to one returning a `IOEither`.
@@ -212,10 +212,13 @@ export const tryCatch = <E, A>(f: Lazy<A>, onThrow: (reason: unknown) => E): IOE
  * @category interop
  * @since 2.10.0
  */
-export const tryCatchK = <A extends ReadonlyArray<unknown>, B, E>(
-  f: (...a: A) => B,
-  onThrow: (reason: unknown) => E
-): ((...a: A) => IOEither<E, B>) => (...a) => tryCatch(() => f(...a), onThrow)
+export const tryCatchK =
+  <A extends ReadonlyArray<unknown>, B, E>(
+    f: (...a: A) => B,
+    onThrow: (reason: unknown) => E
+  ): ((...a: A) => IOEither<E, B>) =>
+  (...a) =>
+    tryCatch(() => f(...a), onThrow)
 
 /**
  * @category interop
@@ -352,9 +355,8 @@ export const ap: <E, A>(fa: IOEither<E, A>) => <B>(fab: IOEither<E, (a: A) => B>
  * @category Apply
  * @since 2.8.0
  */
-export const apW: <E2, A>(
-  fa: IOEither<E2, A>
-) => <E1, B>(fab: IOEither<E1, (a: A) => B>) => IOEither<E1 | E2, B> = ap as any
+export const apW: <E2, A>(fa: IOEither<E2, A>) => <E1, B>(fab: IOEither<E1, (a: A) => B>) => IOEither<E1 | E2, B> =
+  ap as any
 
 /**
  * @category Pointed
@@ -378,9 +380,8 @@ export const chain: <E, A, B>(f: (a: A) => IOEither<E, B>) => (ma: IOEither<E, A
  * @category Monad
  * @since 2.6.0
  */
-export const chainW: <E2, A, B>(
-  f: (a: A) => IOEither<E2, B>
-) => <E1>(ma: IOEither<E1, A>) => IOEither<E1 | E2, B> = chain as any
+export const chainW: <E2, A, B>(f: (a: A) => IOEither<E2, B>) => <E1>(ma: IOEither<E1, A>) => IOEither<E1 | E2, B> =
+  chain as any
 
 /**
  * Less strict version of [`flatten`](#flatten).
@@ -417,9 +418,8 @@ export const alt: <E, A>(that: Lazy<IOEither<E, A>>) => (fa: IOEither<E, A>) => 
  * @category Alt
  * @since 2.9.0
  */
-export const altW: <E2, B>(
-  that: Lazy<IOEither<E2, B>>
-) => <E1, A>(fa: IOEither<E1, A>) => IOEither<E2, A | B> = alt as any
+export const altW: <E2, B>(that: Lazy<IOEither<E2, B>>) => <E1, A>(fa: IOEither<E1, A>) => IOEither<E2, A | B> =
+  alt as any
 
 /**
  * @category MonadThrow
@@ -892,9 +892,8 @@ export const bind =
 export const bindW: <N extends string, A, E2, B>(
   name: Exclude<N, keyof A>,
   f: (a: A) => IOEither<E2, B>
-) => <E1>(
-  fa: IOEither<E1, A>
-) => IOEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = bind as any
+) => <E1>(fa: IOEither<E1, A>) => IOEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  bind as any
 
 // -------------------------------------------------------------------------------------
 // pipeable sequence S
@@ -913,9 +912,8 @@ export const apS =
 export const apSW: <A, N extends string, E2, B>(
   name: Exclude<N, keyof A>,
   fb: IOEither<E2, B>
-) => <E1>(
-  fa: IOEither<E1, A>
-) => IOEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = apS as any
+) => <E1>(fa: IOEither<E1, A>) => IOEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  apS as any
 
 // -------------------------------------------------------------------------------------
 // sequence T
@@ -959,23 +957,24 @@ export const traverseReadonlyArrayWithIndex = <A, E, B>(
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndexSeq = <A, E, B>(f: (index: number, a: A) => IOEither<E, B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): IOEither<E, ReadonlyNonEmptyArray<B>> => () => {
-  const e = f(0, _.head(as))()
-  if (_.isLeft(e)) {
-    return e
-  }
-  const out: NonEmptyArray<B> = [e.right]
-  for (let i = 1; i < as.length; i++) {
-    const e = f(i, as[i])()
+export const traverseReadonlyNonEmptyArrayWithIndexSeq =
+  <A, E, B>(f: (index: number, a: A) => IOEither<E, B>) =>
+  (as: ReadonlyNonEmptyArray<A>): IOEither<E, ReadonlyNonEmptyArray<B>> =>
+  () => {
+    const e = f(0, _.head(as))()
     if (_.isLeft(e)) {
       return e
     }
-    out.push(e.right)
+    const out: NonEmptyArray<B> = [e.right]
+    for (let i = 1; i < as.length; i++) {
+      const e = f(i, as[i])()
+      if (_.isLeft(e)) {
+        return e
+      }
+      out.push(e.right)
+    }
+    return _.right(out)
   }
-  return _.right(out)
-}
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(ApplicativeSeq)`.

@@ -327,15 +327,16 @@ export const ApT: IO<readonly []> =
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndex = <A, B>(f: (index: number, a: A) => IO<B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): IO<ReadonlyNonEmptyArray<B>> => () => {
-  const out: NonEmptyArray<B> = [f(0, _.head(as))()]
-  for (let i = 1; i < as.length; i++) {
-    out.push(f(i, as[i])())
+export const traverseReadonlyNonEmptyArrayWithIndex =
+  <A, B>(f: (index: number, a: A) => IO<B>) =>
+  (as: ReadonlyNonEmptyArray<A>): IO<ReadonlyNonEmptyArray<B>> =>
+  () => {
+    const out: NonEmptyArray<B> = [f(0, _.head(as))()]
+    for (let i = 1; i < as.length; i++) {
+      out.push(f(i, as[i])())
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(Applicative)`.

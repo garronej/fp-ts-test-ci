@@ -275,14 +275,20 @@ export const FromState: FromState2<URI> = {
  *
  * @since 2.8.0
  */
-export const evaluate = <S>(s: S) => <A>(ma: State<S, A>): A => ma(s)[0]
+export const evaluate =
+  <S>(s: S) =>
+  <A>(ma: State<S, A>): A =>
+    ma(s)[0]
 
 /**
  * Run a computation in the `State` monad discarding the result
  *
  * @since 2.8.0
  */
-export const execute = <S>(s: S) => <A>(ma: State<S, A>): S => ma(s)[1]
+export const execute =
+  <S>(s: S) =>
+  <A>(ma: State<S, A>): S =>
+    ma(s)[1]
 
 // -------------------------------------------------------------------------------------
 // do notation
@@ -322,19 +328,20 @@ export const apS =
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndex = <A, S, B>(f: (index: number, a: A) => State<S, B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): State<S, ReadonlyNonEmptyArray<B>> => (s) => {
-  const [b, s2] = f(0, _.head(as))(s)
-  const bs: NonEmptyArray<B> = [b]
-  let out = s2
-  for (let i = 1; i < as.length; i++) {
-    const [b, s2] = f(i, as[i])(out)
-    bs.push(b)
-    out = s2
+export const traverseReadonlyNonEmptyArrayWithIndex =
+  <A, S, B>(f: (index: number, a: A) => State<S, B>) =>
+  (as: ReadonlyNonEmptyArray<A>): State<S, ReadonlyNonEmptyArray<B>> =>
+  (s) => {
+    const [b, s2] = f(0, _.head(as))(s)
+    const bs: NonEmptyArray<B> = [b]
+    let out = s2
+    for (let i = 1; i < as.length; i++) {
+      const [b, s2] = f(i, as[i])(out)
+      bs.push(b)
+      out = s2
+    }
+    return [bs, out]
   }
-  return [bs, out]
-}
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(Applicative)`.

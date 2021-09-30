@@ -186,10 +186,8 @@ export const match: <E, B, A>(onLeft: (e: E) => B, onRight: (a: A) => B) => (ma:
  * @category destructors
  * @since 2.10.0
  */
-export const matchW: <E, B, A, C>(
-  onLeft: (e: E) => B,
-  onRight: (a: A) => C
-) => (ma: TaskEither<E, A>) => Task<B | C> = match as any
+export const matchW: <E, B, A, C>(onLeft: (e: E) => B, onRight: (a: A) => C) => (ma: TaskEither<E, A>) => Task<B | C> =
+  match as any
 
 /**
  * @category destructors
@@ -243,9 +241,8 @@ export const getOrElse: <E, A>(onLeft: (e: E) => Task<A>) => (ma: TaskEither<E, 
  * @category destructors
  * @since 2.6.0
  */
-export const getOrElseW: <E, B>(
-  onLeft: (e: E) => Task<B>
-) => <A>(ma: TaskEither<E, A>) => Task<A | B> = getOrElse as any
+export const getOrElseW: <E, B>(onLeft: (e: E) => Task<B>) => <A>(ma: TaskEither<E, A>) => Task<A | B> =
+  getOrElse as any
 
 // -------------------------------------------------------------------------------------
 // interop
@@ -272,8 +269,10 @@ export const getOrElseW: <E, B>(
  * @category interop
  * @since 2.0.0
  */
-export const tryCatch = <E, A>(f: Lazy<Promise<A>>, onRejected: (reason: unknown) => E): TaskEither<E, A> => () =>
-  f().then(_.right, (reason) => _.left(onRejected(reason)))
+export const tryCatch =
+  <E, A>(f: Lazy<Promise<A>>, onRejected: (reason: unknown) => E): TaskEither<E, A> =>
+  () =>
+    f().then(_.right, (reason) => _.left(onRejected(reason)))
 
 /**
  * Converts a function returning a `Promise` to one returning a `TaskEither`.
@@ -281,10 +280,13 @@ export const tryCatch = <E, A>(f: Lazy<Promise<A>>, onRejected: (reason: unknown
  * @category interop
  * @since 2.5.0
  */
-export const tryCatchK = <E, A extends ReadonlyArray<unknown>, B>(
-  f: (...a: A) => Promise<B>,
-  onRejected: (reason: unknown) => E
-): ((...a: A) => TaskEither<E, B>) => (...a) => tryCatch(() => f(...a), onRejected)
+export const tryCatchK =
+  <E, A extends ReadonlyArray<unknown>, B>(
+    f: (...a: A) => Promise<B>,
+    onRejected: (reason: unknown) => E
+  ): ((...a: A) => TaskEither<E, B>) =>
+  (...a) =>
+    tryCatch(() => f(...a), onRejected)
 
 /**
  * @category interop
@@ -407,9 +409,8 @@ export const chainIOEitherKW: <E2, A, B>(
  * @category combinators
  * @since 2.4.0
  */
-export const chainIOEitherK: <E, A, B>(
-  f: (a: A) => IOEither<E, B>
-) => (ma: TaskEither<E, A>) => TaskEither<E, B> = chainIOEitherKW
+export const chainIOEitherK: <E, A, B>(f: (a: A) => IOEither<E, B>) => (ma: TaskEither<E, A>) => TaskEither<E, B> =
+  chainIOEitherKW
 
 // -------------------------------------------------------------------------------------
 // non-pipeables
@@ -576,9 +577,8 @@ export const alt: <E, A>(that: Lazy<TaskEither<E, A>>) => (fa: TaskEither<E, A>)
  * @category Alt
  * @since 2.9.0
  */
-export const altW: <E2, B>(
-  that: Lazy<TaskEither<E2, B>>
-) => <E1, A>(fa: TaskEither<E1, A>) => TaskEither<E2, A | B> = alt as any
+export const altW: <E2, B>(that: Lazy<TaskEither<E2, B>>) => <E1, A>(fa: TaskEither<E1, A>) => TaskEither<E2, A | B> =
+  alt as any
 
 /**
  * @category Pointed
@@ -1169,9 +1169,8 @@ export const bind =
 export const bindW: <N extends string, A, E2, B>(
   name: Exclude<N, keyof A>,
   f: (a: A) => TaskEither<E2, B>
-) => <E1>(
-  fa: TaskEither<E1, A>
-) => TaskEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = bind as any
+) => <E1>(fa: TaskEither<E1, A>) => TaskEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  bind as any
 
 // -------------------------------------------------------------------------------------
 // pipeable sequence S
@@ -1190,9 +1189,8 @@ export const apS =
 export const apSW: <A, N extends string, E2, B>(
   name: Exclude<N, keyof A>,
   fb: TaskEither<E2, B>
-) => <E1>(
-  fa: TaskEither<E1, A>
-) => TaskEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = apS as any
+) => <E1>(fa: TaskEither<E1, A>) => TaskEither<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  apS as any
 
 // -------------------------------------------------------------------------------------
 // sequence T
@@ -1236,24 +1234,25 @@ export const traverseReadonlyArrayWithIndex = <A, E, B>(
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndexSeq = <A, E, B>(f: (index: number, a: A) => TaskEither<E, B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): TaskEither<E, ReadonlyNonEmptyArray<B>> => () =>
-  _.tail(as).reduce<Promise<Either<E, NonEmptyArray<B>>>>(
-    (acc, a, i) =>
-      acc.then((ebs) =>
-        _.isLeft(ebs)
-          ? acc
-          : f(i + 1, a)().then((eb) => {
-              if (_.isLeft(eb)) {
-                return eb
-              }
-              ebs.right.push(eb.right)
-              return ebs
-            })
-      ),
-    f(0, _.head(as))().then(E.map(_.singleton))
-  )
+export const traverseReadonlyNonEmptyArrayWithIndexSeq =
+  <A, E, B>(f: (index: number, a: A) => TaskEither<E, B>) =>
+  (as: ReadonlyNonEmptyArray<A>): TaskEither<E, ReadonlyNonEmptyArray<B>> =>
+  () =>
+    _.tail(as).reduce<Promise<Either<E, NonEmptyArray<B>>>>(
+      (acc, a, i) =>
+        acc.then((ebs) =>
+          _.isLeft(ebs)
+            ? acc
+            : f(i + 1, a)().then((eb) => {
+                if (_.isLeft(eb)) {
+                  return eb
+                }
+                ebs.right.push(eb.right)
+                return ebs
+              })
+        ),
+      f(0, _.head(as))().then(E.map(_.singleton))
+    )
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(ApplicativeSeq)`.

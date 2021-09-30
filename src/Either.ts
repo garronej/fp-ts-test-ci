@@ -370,9 +370,9 @@ export const Pointed: Pointed2<URI> = {
  * @category instance operations
  * @since 2.8.0
  */
-export const apW: <E2, A>(fa: Either<E2, A>) => <E1, B>(fab: Either<E1, (a: A) => B>) => Either<E1 | E2, B> = (fa) => (
-  fab
-) => (isLeft(fab) ? fab : isLeft(fa) ? fa : right(fab.right(fa.right)))
+export const apW: <E2, A>(fa: Either<E2, A>) => <E1, B>(fab: Either<E1, (a: A) => B>) => Either<E1 | E2, B> =
+  (fa) => (fab) =>
+    isLeft(fab) ? fab : isLeft(fa) ? fa : right(fab.right(fa.right))
 
 /**
  * Apply a function to an argument under a type constructor.
@@ -409,8 +409,10 @@ export const Applicative: Applicative2<URI> = {
  * @category instance operations
  * @since 2.6.0
  */
-export const chainW = <E2, A, B>(f: (a: A) => Either<E2, B>) => <E1>(ma: Either<E1, A>): Either<E1 | E2, B> =>
-  isLeft(ma) ? ma : f(ma.right)
+export const chainW =
+  <E2, A, B>(f: (a: A) => Either<E2, B>) =>
+  <E1>(ma: Either<E1, A>): Either<E1 | E2, B> =>
+    isLeft(ma) ? ma : f(ma.right)
 
 /**
  * Composes computations in sequence, using the return value of one computation to determine the next computation.
@@ -554,9 +556,11 @@ export const Foldable: Foldable2<URI> = {
  * @category instance operations
  * @since 2.6.3
  */
-export const traverse: PipeableTraverse2<URI> = <F>(F: ApplicativeHKT<F>) => <A, B>(f: (a: A) => HKT<F, B>) => <E>(
-  ta: Either<E, A>
-): HKT<F, Either<E, B>> => (isLeft(ta) ? F.of(left(ta.left)) : F.map<B, Either<E, B>>(f(ta.right), right))
+export const traverse: PipeableTraverse2<URI> =
+  <F>(F: ApplicativeHKT<F>) =>
+  <A, B>(f: (a: A) => HKT<F, B>) =>
+  <E>(ta: Either<E, A>): HKT<F, Either<E, B>> =>
+    isLeft(ta) ? F.of(left(ta.left)) : F.map<B, Either<E, B>>(f(ta.right), right)
 
 /**
  * Evaluate each monadic action in the structure from left to right, and collect the results.
@@ -579,11 +583,11 @@ export const traverse: PipeableTraverse2<URI> = <F>(F: ApplicativeHKT<F>) => <A,
  * @category instance operations
  * @since 2.6.3
  */
-export const sequence: Traversable2<URI>['sequence'] = <F>(F: ApplicativeHKT<F>) => <E, A>(
-  ma: Either<E, HKT<F, A>>
-): HKT<F, Either<E, A>> => {
-  return isLeft(ma) ? F.of(left(ma.left)) : F.map<A, Either<E, A>>(ma.right, right)
-}
+export const sequence: Traversable2<URI>['sequence'] =
+  <F>(F: ApplicativeHKT<F>) =>
+  <E, A>(ma: Either<E, HKT<F, A>>): HKT<F, Either<E, A>> => {
+    return isLeft(ma) ? F.of(left(ma.left)) : F.map<A, Either<E, A>>(ma.right, right)
+  }
 
 /**
  * @category instances
@@ -605,9 +609,9 @@ export const Traversable: Traversable2<URI> = {
  * @category instance operations
  * @since 2.0.0
  */
-export const bimap: <E, G, A, B>(f: (e: E) => G, g: (a: A) => B) => (fa: Either<E, A>) => Either<G, B> = (f, g) => (
-  fa
-) => (isLeft(fa) ? left(f(fa.left)) : right(g(fa.right)))
+export const bimap: <E, G, A, B>(f: (e: E) => G, g: (a: A) => B) => (fa: Either<E, A>) => Either<G, B> =
+  (f, g) => (fa) =>
+    isLeft(fa) ? left(f(fa.left)) : right(g(fa.right))
 
 /**
  * Map a function over the first type argument of a bifunctor.
@@ -634,9 +638,9 @@ export const Bifunctor: Bifunctor2<URI> = {
  * @category instance operations
  * @since 2.9.0
  */
-export const altW: <E2, B>(that: Lazy<Either<E2, B>>) => <E1, A>(fa: Either<E1, A>) => Either<E2, A | B> = (that) => (
-  fa
-) => (isLeft(fa) ? that() : fa)
+export const altW: <E2, B>(that: Lazy<Either<E2, B>>) => <E1, A>(fa: Either<E1, A>) => Either<E2, A | B> =
+  (that) => (fa) =>
+    isLeft(fa) ? that() : fa
 
 /**
  * Identifies an associative operation on a type constructor. It is similar to `Semigroup`, except that it applies to
@@ -809,8 +813,10 @@ export const isRight: <A>(ma: Either<unknown, A>) => ma is Right<A> = _.isRight
  * @category destructors
  * @since 2.10.0
  */
-export const matchW = <E, B, A, C>(onLeft: (e: E) => B, onRight: (a: A) => C) => (ma: Either<E, A>): B | C =>
-  isLeft(ma) ? onLeft(ma.left) : onRight(ma.right)
+export const matchW =
+  <E, B, A, C>(onLeft: (e: E) => B, onRight: (a: A) => C) =>
+  (ma: Either<E, A>): B | C =>
+    isLeft(ma) ? onLeft(ma.left) : onRight(ma.right)
 
 /**
  * Alias of [`matchW`](#matchw).
@@ -870,8 +876,10 @@ export const fold: <E, A, B>(onLeft: (e: E) => B, onRight: (a: A) => B) => (ma: 
  * @category destructors
  * @since 2.6.0
  */
-export const getOrElseW = <E, B>(onLeft: (e: E) => B) => <A>(ma: Either<E, A>): A | B =>
-  isLeft(ma) ? onLeft(ma.left) : ma.right
+export const getOrElseW =
+  <E, B>(onLeft: (e: E) => B) =>
+  <A>(ma: Either<E, A>): A | B =>
+    isLeft(ma) ? onLeft(ma.left) : ma.right
 
 /**
  * Returns the wrapped value if it's a `Right` or a default value if is a `Left`.
@@ -959,9 +967,8 @@ export const chainFirst: <E, A, B>(f: (a: A) => Either<E, B>) => (ma: Either<E, 
  * @category combinators
  * @since 2.8.0
  */
-export const chainFirstW: <E2, A, B>(
-  f: (a: A) => Either<E2, B>
-) => <E1>(ma: Either<E1, A>) => Either<E1 | E2, A> = chainFirst as any
+export const chainFirstW: <E2, A, B>(f: (a: A) => Either<E2, B>) => <E1>(ma: Either<E1, A>) => Either<E1 | E2, A> =
+  chainFirst as any
 
 /**
  * Less strict version of [`flatten`](#flatten).
@@ -1087,8 +1094,10 @@ export const swap = <E, A>(ma: Either<E, A>): Either<A, E> => (isLeft(ma) ? righ
  * @category combinators
  * @since 2.10.0
  */
-export const orElseW = <E1, E2, B>(onLeft: (e: E1) => Either<E2, B>) => <A>(ma: Either<E1, A>): Either<E2, A | B> =>
-  isLeft(ma) ? onLeft(ma.left) : ma
+export const orElseW =
+  <E1, E2, B>(onLeft: (e: E1) => Either<E2, B>) =>
+  <A>(ma: Either<E1, A>): Either<E2, A | B> =>
+    isLeft(ma) ? onLeft(ma.left) : ma
 
 /**
  * Useful for recovering from errors.
@@ -1117,8 +1126,10 @@ export const orElse: <E1, A, E2>(onLeft: (e: E1) => Either<E2, A>) => (ma: Eithe
  * @category interop
  * @since 2.0.0
  */
-export const fromNullable = <E>(e: E) => <A>(a: A): Either<E, NonNullable<A>> =>
-  a == null ? left(e) : right(a as NonNullable<A>)
+export const fromNullable =
+  <E>(e: E) =>
+  <A>(a: A): Either<E, NonNullable<A>> =>
+    a == null ? left(e) : right(a as NonNullable<A>)
 
 /**
  * Constructs a new `Either` from a function that might throw.
@@ -1159,10 +1170,13 @@ export const tryCatch = <E, A>(f: Lazy<A>, onThrow: (e: unknown) => E): Either<E
  * @category interop
  * @since 2.10.0
  */
-export const tryCatchK = <A extends ReadonlyArray<unknown>, B, E>(
-  f: (...a: A) => B,
-  onThrow: (error: unknown) => E
-): ((...a: A) => Either<E, B>) => (...a) => tryCatch(() => f(...a), onThrow)
+export const tryCatchK =
+  <A extends ReadonlyArray<unknown>, B, E>(
+    f: (...a: A) => B,
+    onThrow: (error: unknown) => E
+  ): ((...a: A) => Either<E, B>) =>
+  (...a) =>
+    tryCatch(() => f(...a), onThrow)
 
 /**
  * @category interop
@@ -1212,8 +1226,10 @@ export function toError(e: unknown): Error {
 /**
  * @since 2.0.0
  */
-export const elem = <A>(E: Eq<A>) => <E>(a: A, ma: Either<E, A>): boolean =>
-  isLeft(ma) ? false : E.equals(a, ma.right)
+export const elem =
+  <A>(E: Eq<A>) =>
+  <E>(a: A, ma: Either<E, A>): boolean =>
+    isLeft(ma) ? false : E.equals(a, ma.right)
 
 /**
  * Returns `false` if `Left` or returns the result of the application of the given predicate to the `Right` value.
@@ -1229,8 +1245,10 @@ export const elem = <A>(E: Eq<A>) => <E>(a: A, ma: Either<E, A>): boolean =>
  *
  * @since 2.0.0
  */
-export const exists = <A>(predicate: Predicate<A>) => <E>(ma: Either<E, A>): boolean =>
-  isLeft(ma) ? false : predicate(ma.right)
+export const exists =
+  <A>(predicate: Predicate<A>) =>
+  <E>(ma: Either<E, A>): boolean =>
+    isLeft(ma) ? false : predicate(ma.right)
 
 // -------------------------------------------------------------------------------------
 // do notation
@@ -1263,9 +1281,8 @@ export const bind =
 export const bindW: <N extends string, A, E2, B>(
   name: Exclude<N, keyof A>,
   f: (a: A) => Either<E2, B>
-) => <E1>(
-  fa: Either<E1, A>
-) => Either<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = bind as any
+) => <E1>(fa: Either<E1, A>) => Either<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  bind as any
 
 // -------------------------------------------------------------------------------------
 // pipeable sequence S
@@ -1284,9 +1301,8 @@ export const apS =
 export const apSW: <A, N extends string, E2, B>(
   name: Exclude<N, keyof A>,
   fb: Either<E2, B>
-) => <E1>(
-  fa: Either<E1, A>
-) => Either<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> = apS as any
+) => <E1>(fa: Either<E1, A>) => Either<E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  apS as any
 
 // -------------------------------------------------------------------------------------
 // sequence T
@@ -1308,23 +1324,23 @@ export const ApT: Either<never, readonly []> =
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndex = <A, E, B>(f: (index: number, a: A) => Either<E, B>) => (
-  as: ReadonlyNonEmptyArray<A>
-): Either<E, ReadonlyNonEmptyArray<B>> => {
-  const e = f(0, _.head(as))
-  if (isLeft(e)) {
-    return e
-  }
-  const out: NonEmptyArray<B> = [e.right]
-  for (let i = 1; i < as.length; i++) {
-    const e = f(i, as[i])
+export const traverseReadonlyNonEmptyArrayWithIndex =
+  <A, E, B>(f: (index: number, a: A) => Either<E, B>) =>
+  (as: ReadonlyNonEmptyArray<A>): Either<E, ReadonlyNonEmptyArray<B>> => {
+    const e = f(0, _.head(as))
     if (isLeft(e)) {
       return e
     }
-    out.push(e.right)
+    const out: NonEmptyArray<B> = [e.right]
+    for (let i = 1; i < as.length; i++) {
+      const e = f(i, as[i])
+      if (isLeft(e)) {
+        return e
+      }
+      out.push(e.right)
+    }
+    return right(out)
   }
-  return right(out)
-}
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(Applicative)`.

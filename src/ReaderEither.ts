@@ -244,9 +244,8 @@ export const asksReaderEitherW: <R1, R2, E, A>(f: (r1: R1) => ReaderEither<R2, E
  * @category combinators
  * @since 2.11.0
  */
-export const asksReaderEither: <R, E, A>(
-  f: (r: R) => ReaderEither<R, E, A>
-) => ReaderEither<R, E, A> = asksReaderEitherW
+export const asksReaderEither: <R, E, A>(f: (r: R) => ReaderEither<R, E, A>) => ReaderEither<R, E, A> =
+  asksReaderEitherW
 
 /**
  * @category combinators

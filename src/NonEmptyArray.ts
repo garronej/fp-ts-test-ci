@@ -72,7 +72,10 @@ export const isOutOfBound = <A>(i: number, as: Array<A>): boolean => i < 0 || i 
 /**
  * @internal
  */
-export const prependW = <B>(head: B) => <A>(tail: Array<A>): NonEmptyArray<A | B> => [head, ...tail]
+export const prependW =
+  <B>(head: B) =>
+  <A>(tail: Array<A>): NonEmptyArray<A | B> =>
+    [head, ...tail]
 
 /**
  * @internal
@@ -82,7 +85,10 @@ export const prepend: <A>(head: A) => (tail: Array<A>) => NonEmptyArray<A> = pre
 /**
  * @internal
  */
-export const appendW = <B>(end: B) => <A>(init: Array<A>): NonEmptyArray<A | B> => [...init, end] as any
+export const appendW =
+  <B>(end: B) =>
+  <A>(init: Array<A>): NonEmptyArray<A | B> =>
+    [...init, end] as any
 
 /**
  * @internal
@@ -122,19 +128,21 @@ export const unsafeUpdateAt = <A>(i: number, a: A, as: NonEmptyArray<A>): NonEmp
  * @category combinators
  * @since 2.11.0
  */
-export const uniq = <A>(E: Eq<A>) => (as: NonEmptyArray<A>): NonEmptyArray<A> => {
-  if (as.length === 1) {
-    return copy(as)
-  }
-  const out: NonEmptyArray<A> = [head(as)]
-  const rest = tail(as)
-  for (const a of rest) {
-    if (out.every((o) => !E.equals(o, a))) {
-      out.push(a)
+export const uniq =
+  <A>(E: Eq<A>) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<A> => {
+    if (as.length === 1) {
+      return copy(as)
     }
+    const out: NonEmptyArray<A> = [head(as)]
+    const rest = tail(as)
+    for (const a of rest) {
+      if (out.every((o) => !E.equals(o, a))) {
+        out.push(a)
+      }
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Sort the elements of a `NonEmptyArray` in increasing order, where elements are compared using first `ords[0]`, then `ords[1]`,
@@ -204,19 +212,21 @@ export const union = <A>(E: Eq<A>): ((second: NonEmptyArray<A>) => (first: NonEm
  * @category combinators
  * @since 2.11.0
  */
-export const rotate = (n: number) => <A>(as: NonEmptyArray<A>): NonEmptyArray<A> => {
-  const len = as.length
-  const m = Math.round(n) % len
-  if (isOutOfBound(Math.abs(m), as) || m === 0) {
-    return copy(as)
+export const rotate =
+  (n: number) =>
+  <A>(as: NonEmptyArray<A>): NonEmptyArray<A> => {
+    const len = as.length
+    const m = Math.round(n) % len
+    if (isOutOfBound(Math.abs(m), as) || m === 0) {
+      return copy(as)
+    }
+    if (m < 0) {
+      const [f, s] = splitAt(-m)(as)
+      return pipe(s, concat(f))
+    } else {
+      return rotate(m - len)(as)
+    }
   }
-  if (m < 0) {
-    const [f, s] = splitAt(-m)(as)
-    return pipe(s, concat(f))
-  } else {
-    return rotate(m - len)(as)
-  }
-}
 
 // -------------------------------------------------------------------------------------
 // constructors
@@ -252,14 +262,16 @@ export const fromArray = <A>(as: Array<A>): Option<NonEmptyArray<A>> => (isNonEm
  * @category constructors
  * @since 2.11.0
  */
-export const makeBy = <A>(f: (i: number) => A) => (n: number): NonEmptyArray<A> => {
-  const j = Math.max(0, Math.floor(n))
-  const out: NonEmptyArray<A> = [f(0)]
-  for (let i = 1; i < j; i++) {
-    out.push(f(i))
+export const makeBy =
+  <A>(f: (i: number) => A) =>
+  (n: number): NonEmptyArray<A> => {
+    const j = Math.max(0, Math.floor(n))
+    const out: NonEmptyArray<A> = [f(0)]
+    for (let i = 1; i < j; i++) {
+      out.push(f(i))
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Create a `NonEmptyArray` containing a value repeated the specified number of times.
@@ -371,9 +383,7 @@ export const reverse = <A>(as: NonEmptyArray<A>): NonEmptyArray<A> => [last(as),
  * @category combinators
  * @since 2.0.0
  */
-export function group<B>(
-  E: Eq<B>
-): {
+export function group<B>(E: Eq<B>): {
   <A extends B>(as: NonEmptyArray<A>): NonEmptyArray<NonEmptyArray<A>>
   <A extends B>(as: Array<A>): Array<NonEmptyArray<A>>
 }
@@ -416,32 +426,38 @@ export function group<A>(E: Eq<A>): (as: Array<A>) => Array<NonEmptyArray<A>> {
  * @category combinators
  * @since 2.0.0
  */
-export const groupBy = <A>(f: (a: A) => string) => (as: Array<A>): Record<string, NonEmptyArray<A>> => {
-  const out: Record<string, NonEmptyArray<A>> = {}
-  for (const a of as) {
-    const k = f(a)
-    if (out.hasOwnProperty(k)) {
-      out[k].push(a)
-    } else {
-      out[k] = [a]
+export const groupBy =
+  <A>(f: (a: A) => string) =>
+  (as: Array<A>): Record<string, NonEmptyArray<A>> => {
+    const out: Record<string, NonEmptyArray<A>> = {}
+    for (const a of as) {
+      const k = f(a)
+      if (out.hasOwnProperty(k)) {
+        out[k].push(a)
+      } else {
+        out[k] = [a]
+      }
     }
+    return out
   }
-  return out
-}
 
 /**
  * @category combinators
  * @since 2.0.0
  */
-export const sort = <B>(O: Ord<B>) => <A extends B>(as: NonEmptyArray<A>): NonEmptyArray<A> =>
-  as.slice().sort(O.compare) as any
+export const sort =
+  <B>(O: Ord<B>) =>
+  <A extends B>(as: NonEmptyArray<A>): NonEmptyArray<A> =>
+    as.slice().sort(O.compare) as any
 
 /**
  * @category combinators
  * @since 2.0.0
  */
-export const insertAt = <A>(i: number, a: A) => (as: Array<A>): Option<NonEmptyArray<A>> =>
-  i < 0 || i > as.length ? _.none : _.some(unsafeInsertAt(i, a, as))
+export const insertAt =
+  <A>(i: number, a: A) =>
+  (as: Array<A>): Option<NonEmptyArray<A>> =>
+    i < 0 || i > as.length ? _.none : _.some(unsafeInsertAt(i, a, as))
 
 /**
  * @category combinators
@@ -454,8 +470,10 @@ export const updateAt = <A>(i: number, a: A): ((as: NonEmptyArray<A>) => Option<
  * @category combinators
  * @since 2.0.0
  */
-export const modifyAt = <A>(i: number, f: (a: A) => A) => (as: NonEmptyArray<A>): Option<NonEmptyArray<A>> =>
-  isOutOfBound(i, as) ? _.none : _.some(unsafeUpdateAt(i, f(as[i]), as))
+export const modifyAt =
+  <A>(i: number, f: (a: A) => A) =>
+  (as: NonEmptyArray<A>): Option<NonEmptyArray<A>> =>
+    isOutOfBound(i, as) ? _.none : _.some(unsafeUpdateAt(i, f(as[i]), as))
 
 /**
  * @category combinators
@@ -527,13 +545,15 @@ export const unzip = <A, B>(abs: NonEmptyArray<[A, B]>): [NonEmptyArray<A>, NonE
  * @category combinators
  * @since 2.10.0
  */
-export const prependAll = <A>(middle: A) => (as: NonEmptyArray<A>): NonEmptyArray<A> => {
-  const out: NonEmptyArray<A> = [middle, as[0]]
-  for (let i = 1; i < as.length; i++) {
-    out.push(middle, as[i])
+export const prependAll =
+  <A>(middle: A) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<A> => {
+    const out: NonEmptyArray<A> = [middle, as[0]]
+    for (let i = 1; i < as.length; i++) {
+      out.push(middle, as[i])
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Places an element in between members of an array
@@ -546,10 +566,12 @@ export const prependAll = <A>(middle: A) => (as: NonEmptyArray<A>): NonEmptyArra
  * @category combinators
  * @since 2.9.0
  */
-export const intersperse = <A>(middle: A) => (as: NonEmptyArray<A>): NonEmptyArray<A> => {
-  const rest = tail(as)
-  return isNonEmpty(rest) ? pipe(rest, prependAll(middle), prepend(head(as))) : copy(as)
-}
+export const intersperse =
+  <A>(middle: A) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<A> => {
+    const rest = tail(as)
+    return isNonEmpty(rest) ? pipe(rest, prependAll(middle), prepend(head(as))) : copy(as)
+  }
 
 /**
  * @category combinators
@@ -568,31 +590,33 @@ export const foldMap: <S>(S: Semigroup<S>) => <A>(f: (a: A) => S) => (fa: NonEmp
  * @category combinators
  * @since 2.10.0
  */
-export const chainWithIndex = <A, B>(f: (i: number, a: A) => NonEmptyArray<B>) => (
-  as: NonEmptyArray<A>
-): NonEmptyArray<B> => {
-  const out: NonEmptyArray<B> = fromReadonlyNonEmptyArray(f(0, head(as)))
-  for (let i = 1; i < as.length; i++) {
-    out.push(...f(i, as[i]))
+export const chainWithIndex =
+  <A, B>(f: (i: number, a: A) => NonEmptyArray<B>) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<B> => {
+    const out: NonEmptyArray<B> = fromReadonlyNonEmptyArray(f(0, head(as)))
+    for (let i = 1; i < as.length; i++) {
+      out.push(...f(i, as[i]))
+    }
+    return out
   }
-  return out
-}
 
 /**
  * @category combinators
  * @since 2.10.0
  */
-export const chop = <A, B>(f: (as: NonEmptyArray<A>) => [B, Array<A>]) => (as: NonEmptyArray<A>): NonEmptyArray<B> => {
-  const [b, rest] = f(as)
-  const out: NonEmptyArray<B> = [b]
-  let next: Array<A> = rest
-  while (isNonEmpty(next)) {
-    const [b, rest] = f(next)
-    out.push(b)
-    next = rest
+export const chop =
+  <A, B>(f: (as: NonEmptyArray<A>) => [B, Array<A>]) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<B> => {
+    const [b, rest] = f(as)
+    const out: NonEmptyArray<B> = [b]
+    let next: Array<A> = rest
+    while (isNonEmpty(next)) {
+      const [b, rest] = f(next)
+      out.push(b)
+      next = rest
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Splits a `NonEmptyArray` into two pieces, the first piece has max `n` elements.
@@ -600,10 +624,12 @@ export const chop = <A, B>(f: (as: NonEmptyArray<A>) => [B, Array<A>]) => (as: N
  * @category combinators
  * @since 2.10.0
  */
-export const splitAt = (n: number) => <A>(as: NonEmptyArray<A>): [NonEmptyArray<A>, Array<A>] => {
-  const m = Math.max(1, n)
-  return m >= as.length ? [copy(as), []] : [pipe(as.slice(1, m), prepend(head(as))), as.slice(m)]
-}
+export const splitAt =
+  (n: number) =>
+  <A>(as: NonEmptyArray<A>): [NonEmptyArray<A>, Array<A>] => {
+    const m = Math.max(1, n)
+    return m >= as.length ? [copy(as), []] : [pipe(as.slice(1, m), prepend(head(as))), as.slice(m)]
+  }
 
 /**
  * @category combinators
@@ -672,8 +698,10 @@ const _traverseWithIndex: TraversableWithIndex1<URI, number>['traverseWithIndex'
  * @category Alt
  * @since 2.9.0
  */
-export const altW = <B>(that: Lazy<NonEmptyArray<B>>) => <A>(as: NonEmptyArray<A>): NonEmptyArray<A | B> =>
-  pipe(as, concatW(that()))
+export const altW =
+  <B>(that: Lazy<NonEmptyArray<B>>) =>
+  <A>(as: NonEmptyArray<A>): NonEmptyArray<A | B> =>
+    pipe(as, concatW(that()))
 
 /**
  * Identifies an associative operation on a type constructor. It is similar to `Semigroup`, except that it applies to
@@ -706,15 +734,17 @@ export const chain = <A, B>(f: (a: A) => NonEmptyArray<B>): ((ma: NonEmptyArray<
  * @category Extend
  * @since 2.0.0
  */
-export const extend = <A, B>(f: (as: NonEmptyArray<A>) => B) => (as: NonEmptyArray<A>): NonEmptyArray<B> => {
-  let next: Array<A> = tail(as)
-  const out: NonEmptyArray<B> = [f(as)]
-  while (isNonEmpty(next)) {
-    out.push(f(next))
-    next = tail(next)
+export const extend =
+  <A, B>(f: (as: NonEmptyArray<A>) => B) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<B> => {
+    let next: Array<A> = tail(as)
+    const out: NonEmptyArray<B> = [f(as)]
+    while (isNonEmpty(next)) {
+      out.push(f(next))
+      next = tail(next)
+    }
+    return out
   }
-  return out
-}
 
 /**
  * Derivable from `Extend`.
@@ -749,13 +779,15 @@ export const map = <A, B>(f: (a: A) => B): ((as: NonEmptyArray<A>) => NonEmptyAr
  * @category FunctorWithIndex
  * @since 2.0.0
  */
-export const mapWithIndex = <A, B>(f: (i: number, a: A) => B) => (as: NonEmptyArray<A>): NonEmptyArray<B> => {
-  const out: NonEmptyArray<B> = [f(0, head(as))]
-  for (let i = 1; i < as.length; i++) {
-    out.push(f(i, as[i]))
+export const mapWithIndex =
+  <A, B>(f: (i: number, a: A) => B) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<B> => {
+    const out: NonEmptyArray<B> = [f(0, head(as))]
+    for (let i = 1; i < as.length; i++) {
+      out.push(f(i, as[i]))
+    }
+    return out
   }
-  return out
-}
 
 /**
  * @category Foldable
@@ -803,18 +835,19 @@ export const sequence: Traversable1<URI>['sequence'] = <F>(
 /**
  * @since 2.6.3
  */
-export const traverseWithIndex: PipeableTraverseWithIndex1<URI, number> = <F>(F: ApplicativeHKT<F>) => <A, B>(
-  f: (i: number, a: A) => HKT<F, B>
-) => (as: NonEmptyArray<A>): HKT<F, NonEmptyArray<B>> => {
-  let out: HKT<F, NonEmptyArray<B>> = F.map(f(0, head(as)), of)
-  for (let i = 1; i < as.length; i++) {
-    out = F.ap(
-      F.map(out, (bs) => (b: B) => pipe(bs, append(b))),
-      f(i, as[i])
-    )
+export const traverseWithIndex: PipeableTraverseWithIndex1<URI, number> =
+  <F>(F: ApplicativeHKT<F>) =>
+  <A, B>(f: (i: number, a: A) => HKT<F, B>) =>
+  (as: NonEmptyArray<A>): HKT<F, NonEmptyArray<B>> => {
+    let out: HKT<F, NonEmptyArray<B>> = F.map(f(0, head(as)), of)
+    for (let i = 1; i < as.length; i++) {
+      out = F.ap(
+        F.map(out, (bs) => (b: B) => pipe(bs, append(b))),
+        f(i, as[i])
+      )
+    }
+    return out
   }
-  return out
-}
 
 /**
  * @since 2.7.0
@@ -1163,7 +1196,10 @@ export const max: <A>(ord: Ord<A>) => (nea: NonEmptyArray<A>) => A = RNEA.max
 /**
  * @since 2.10.0
  */
-export const concatAll = <A>(S: Semigroup<A>) => (as: NonEmptyArray<A>): A => as.reduce(S.concat)
+export const concatAll =
+  <A>(S: Semigroup<A>) =>
+  (as: NonEmptyArray<A>): A =>
+    as.reduce(S.concat)
 
 /**
  * Break an `Array` into its first element and remaining elements.
@@ -1171,7 +1207,10 @@ export const concatAll = <A>(S: Semigroup<A>) => (as: NonEmptyArray<A>): A => as
  * @category destructors
  * @since 2.11.0
  */
-export const matchLeft = <A, B>(f: (head: A, tail: Array<A>) => B) => (as: NonEmptyArray<A>): B => f(head(as), tail(as))
+export const matchLeft =
+  <A, B>(f: (head: A, tail: Array<A>) => B) =>
+  (as: NonEmptyArray<A>): B =>
+    f(head(as), tail(as))
 
 /**
  * Break an `Array` into its initial elements and the last element.
@@ -1179,18 +1218,20 @@ export const matchLeft = <A, B>(f: (head: A, tail: Array<A>) => B) => (as: NonEm
  * @category destructors
  * @since 2.11.0
  */
-export const matchRight = <A, B>(f: (init: Array<A>, last: A) => B) => (as: NonEmptyArray<A>): B =>
-  f(init(as), last(as))
+export const matchRight =
+  <A, B>(f: (init: Array<A>, last: A) => B) =>
+  (as: NonEmptyArray<A>): B =>
+    f(init(as), last(as))
 
 /**
  * Apply a function to the head, creating a new `NonEmptyArray`.
  *
  * @since 2.11.0
  */
-export const modifyHead = <A>(f: Endomorphism<A>) => (as: NonEmptyArray<A>): NonEmptyArray<A> => [
-  f(head(as)),
-  ...tail(as)
-]
+export const modifyHead =
+  <A>(f: Endomorphism<A>) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<A> =>
+    [f(head(as)), ...tail(as)]
 
 /**
  * Change the head, creating a new `NonEmptyArray`.
@@ -1205,8 +1246,10 @@ export const updateHead = <A>(a: A): ((as: NonEmptyArray<A>) => NonEmptyArray<A>
  *
  * @since 2.11.0
  */
-export const modifyLast = <A>(f: Endomorphism<A>) => (as: NonEmptyArray<A>): NonEmptyArray<A> =>
-  pipe(init(as), append(f(last(as))))
+export const modifyLast =
+  <A>(f: Endomorphism<A>) =>
+  (as: NonEmptyArray<A>): NonEmptyArray<A> =>
+    pipe(init(as), append(f(last(as))))
 
 /**
  * Change the last element, creating a new `NonEmptyArray`.
@@ -1229,9 +1272,7 @@ export const updateLast = <A>(a: A): ((as: NonEmptyArray<A>) => NonEmptyArray<A>
  * @since 2.0.0
  * @deprecated
  */
-export function groupSort<B>(
-  O: Ord<B>
-): {
+export function groupSort<B>(O: Ord<B>): {
   <A extends B>(as: NonEmptyArray<A>): NonEmptyArray<NonEmptyArray<A>>
   <A extends B>(as: Array<A>): Array<NonEmptyArray<A>>
 }
@@ -1262,9 +1303,10 @@ export function filter<A>(predicate: Predicate<A>): (as: NonEmptyArray<A>) => Op
  * @since 2.0.0
  * @deprecated
  */
-export const filterWithIndex = <A>(predicate: (i: number, a: A) => boolean) => (
-  as: NonEmptyArray<A>
-): Option<NonEmptyArray<A>> => fromArray(as.filter((a, i) => predicate(i, a)))
+export const filterWithIndex =
+  <A>(predicate: (i: number, a: A) => boolean) =>
+  (as: NonEmptyArray<A>): Option<NonEmptyArray<A>> =>
+    fromArray(as.filter((a, i) => predicate(i, a)))
 
 /**
  * Use [`unprepend`](#unprepend) instead.

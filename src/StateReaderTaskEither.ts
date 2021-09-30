@@ -159,9 +159,9 @@ export const rightState: <S, R, E = never, A = never>(ma: State<S, A>) => StateR
  * @category constructors
  * @since 2.0.0
  */
-export const leftState: <S, R, E = never, A = never>(me: State<S, E>) => StateReaderTaskEither<S, R, E, A> = (me) => (
-  s
-) => RTE.left(me(s)[0])
+export const leftState: <S, R, E = never, A = never>(me: State<S, E>) => StateReaderTaskEither<S, R, E, A> =
+  (me) => (s) =>
+    RTE.left(me(s)[0])
 
 // -------------------------------------------------------------------------------------
 // natural transformations
@@ -239,9 +239,10 @@ export const fromReaderTaskEither: NaturalTransformation34<RTE.URI, URI> =
  * @category combinators
  * @since 2.11.0
  */
-export const local = <R2, R1>(f: (r2: R2) => R1) => <S, E, A>(
-  ma: StateReaderTaskEither<S, R1, E, A>
-): StateReaderTaskEither<S, R2, E, A> => flow(ma, R.local(f))
+export const local =
+  <R2, R1>(f: (r2: R2) => R1) =>
+  <S, E, A>(ma: StateReaderTaskEither<S, R1, E, A>): StateReaderTaskEither<S, R2, E, A> =>
+    flow(ma, R.local(f))
 
 /**
  * Less strict version of [`asksStateReaderTaskEither`](#asksstatereadertaskeither).
@@ -249,9 +250,11 @@ export const local = <R2, R1>(f: (r2: R2) => R1) => <S, E, A>(
  * @category combinators
  * @since 2.11.0
  */
-export const asksStateReaderTaskEitherW = <R1, S, R2, E, A>(
-  f: (r1: R1) => StateReaderTaskEither<S, R2, E, A>
-): StateReaderTaskEither<S, R1 & R2, E, A> => (s) => (r) => f(r)(s)(r)
+export const asksStateReaderTaskEitherW =
+  <R1, S, R2, E, A>(f: (r1: R1) => StateReaderTaskEither<S, R2, E, A>): StateReaderTaskEither<S, R1 & R2, E, A> =>
+  (s) =>
+  (r) =>
+    f(r)(s)(r)
 
 /**
  * Effectfully accesses the environment.
@@ -267,9 +270,12 @@ export const asksStateReaderTaskEither: <R, S, E, A>(
  * @category combinators
  * @since 2.4.0
  */
-export const fromIOEitherK = <E, A extends ReadonlyArray<unknown>, B>(
-  f: (...a: A) => IOEither<E, B>
-): (<S, R>(...a: A) => StateReaderTaskEither<S, R, E, B>) => (...a) => fromIOEither(f(...a))
+export const fromIOEitherK =
+  <E, A extends ReadonlyArray<unknown>, B>(
+    f: (...a: A) => IOEither<E, B>
+  ): (<S, R>(...a: A) => StateReaderTaskEither<S, R, E, B>) =>
+  (...a) =>
+    fromIOEither(f(...a))
 
 /**
  * Less strict version of [`chainIOEitherK`](#chainioeitherk).
@@ -277,9 +283,10 @@ export const fromIOEitherK = <E, A extends ReadonlyArray<unknown>, B>(
  * @category combinators
  * @since 2.6.1
  */
-export const chainIOEitherKW = <E2, A, B>(f: (a: A) => IOEither<E2, B>) => <S, R, E1>(
-  ma: StateReaderTaskEither<S, R, E1, A>
-): StateReaderTaskEither<S, R, E1 | E2, B> => pipe(ma, chainW<S, R, E2, A, B>(fromIOEitherK(f)))
+export const chainIOEitherKW =
+  <E2, A, B>(f: (a: A) => IOEither<E2, B>) =>
+  <S, R, E1>(ma: StateReaderTaskEither<S, R, E1, A>): StateReaderTaskEither<S, R, E1 | E2, B> =>
+    pipe(ma, chainW<S, R, E2, A, B>(fromIOEitherK(f)))
 
 /**
  * @category combinators
@@ -293,9 +300,12 @@ export const chainIOEitherK: <E, A, B>(
  * @category combinators
  * @since 2.4.0
  */
-export const fromTaskEitherK = <E, A extends ReadonlyArray<unknown>, B>(
-  f: (...a: A) => TaskEither<E, B>
-): (<S, R>(...a: A) => StateReaderTaskEither<S, R, E, B>) => (...a) => fromTaskEither(f(...a))
+export const fromTaskEitherK =
+  <E, A extends ReadonlyArray<unknown>, B>(
+    f: (...a: A) => TaskEither<E, B>
+  ): (<S, R>(...a: A) => StateReaderTaskEither<S, R, E, B>) =>
+  (...a) =>
+    fromTaskEither(f(...a))
 
 /**
  * Less strict version of [`chainTaskEitherK`](#chaintaskeitherk).
@@ -303,9 +313,10 @@ export const fromTaskEitherK = <E, A extends ReadonlyArray<unknown>, B>(
  * @category combinators
  * @since 2.6.1
  */
-export const chainTaskEitherKW = <E2, A, B>(f: (a: A) => TaskEither<E2, B>) => <S, R, E1>(
-  ma: StateReaderTaskEither<S, R, E1, A>
-): StateReaderTaskEither<S, R, E1 | E2, B> => pipe(ma, chainW<S, R, E2, A, B>(fromTaskEitherK(f)))
+export const chainTaskEitherKW =
+  <E2, A, B>(f: (a: A) => TaskEither<E2, B>) =>
+  <S, R, E1>(ma: StateReaderTaskEither<S, R, E1, A>): StateReaderTaskEither<S, R, E1 | E2, B> =>
+    pipe(ma, chainW<S, R, E2, A, B>(fromTaskEitherK(f)))
 
 /**
  * @category combinators
@@ -319,9 +330,12 @@ export const chainTaskEitherK: <E, A, B>(
  * @category combinators
  * @since 2.4.0
  */
-export const fromReaderTaskEitherK = <R, E, A extends ReadonlyArray<unknown>, B>(
-  f: (...a: A) => ReaderTaskEither<R, E, B>
-): (<S>(...a: A) => StateReaderTaskEither<S, R, E, B>) => (...a) => fromReaderTaskEither(f(...a))
+export const fromReaderTaskEitherK =
+  <R, E, A extends ReadonlyArray<unknown>, B>(
+    f: (...a: A) => ReaderTaskEither<R, E, B>
+  ): (<S>(...a: A) => StateReaderTaskEither<S, R, E, B>) =>
+  (...a) =>
+    fromReaderTaskEither(f(...a))
 
 /**
  * Less strict version of [`chainReaderTaskEitherK`](#chainreadertaskeitherk).
@@ -329,9 +343,10 @@ export const fromReaderTaskEitherK = <R, E, A extends ReadonlyArray<unknown>, B>
  * @category combinators
  * @since 2.6.1
  */
-export const chainReaderTaskEitherKW = <R, E2, A, B>(f: (a: A) => ReaderTaskEither<R, E2, B>) => <S, E1>(
-  ma: StateReaderTaskEither<S, R, E1, A>
-): StateReaderTaskEither<S, R, E1 | E2, B> => pipe(ma, chainW<S, R, E2, A, B>(fromReaderTaskEitherK(f)))
+export const chainReaderTaskEitherKW =
+  <R, E2, A, B>(f: (a: A) => ReaderTaskEither<R, E2, B>) =>
+  <S, E1>(ma: StateReaderTaskEither<S, R, E1, A>): StateReaderTaskEither<S, R, E1 | E2, B> =>
+    pipe(ma, chainW<S, R, E2, A, B>(fromReaderTaskEitherK(f)))
 
 /**
  * @category combinators
@@ -434,9 +449,8 @@ export const ap: <S, R, E, A>(
  */
 export const apW: <S, R2, E2, A>(
   fa: StateReaderTaskEither<S, R2, E2, A>
-) => <R1, E1, B>(
-  fab: StateReaderTaskEither<S, R1, E1, (a: A) => B>
-) => StateReaderTaskEither<S, R1 & R2, E1 | E2, B> = ap as any
+) => <R1, E1, B>(fab: StateReaderTaskEither<S, R1, E1, (a: A) => B>) => StateReaderTaskEither<S, R1 & R2, E1 | E2, B> =
+  ap as any
 
 /**
  * @category Pointed
@@ -494,13 +508,14 @@ export const flatten: <S, R, E, A>(
  * @category Alt
  * @since 2.9.0
  */
-export const altW = <S, R2, E2, B>(that: () => StateReaderTaskEither<S, R2, E2, B>) => <R1, E1, A>(
-  fa: StateReaderTaskEither<S, R1, E1, A>
-): StateReaderTaskEither<S, R1 & R2, E2, A | B> => (r) =>
-  pipe(
-    fa(r),
-    RTE.altW(() => that()(r))
-  )
+export const altW =
+  <S, R2, E2, B>(that: () => StateReaderTaskEither<S, R2, E2, B>) =>
+  <R1, E1, A>(fa: StateReaderTaskEither<S, R1, E1, A>): StateReaderTaskEither<S, R1 & R2, E2, A | B> =>
+  (r) =>
+    pipe(
+      fa(r),
+      RTE.altW(() => that()(r))
+    )
 
 /**
  * Identifies an associative operation on a type constructor. It is similar to `Semigroup`, except that it applies to
@@ -771,9 +786,8 @@ export const chainFirst: <S, R, E, A, B>(
  */
 export const chainFirstW: <S, R2, E2, A, B>(
   f: (a: A) => StateReaderTaskEither<S, R2, E2, B>
-) => <R1, E1>(
-  ma: StateReaderTaskEither<S, R1, E1, A>
-) => StateReaderTaskEither<S, R1 & R2, E1 | E2, A> = chainFirst as any
+) => <R1, E1>(ma: StateReaderTaskEither<S, R1, E1, A>) => StateReaderTaskEither<S, R1 & R2, E1 | E2, A> =
+  chainFirst as any
 
 /**
  * @category instances
@@ -852,9 +866,8 @@ export const chainReaderK: <A, R, B>(
  */
 export const chainReaderKW: <A, R1, B>(
   f: (a: A) => Reader<R1, B>
-) => <S, R2, E = never>(
-  ma: StateReaderTaskEither<S, R2, E, A>
-) => StateReaderTaskEither<S, R1 & R2, E, B> = chainReaderK as any
+) => <S, R2, E = never>(ma: StateReaderTaskEither<S, R2, E, A>) => StateReaderTaskEither<S, R1 & R2, E, B> =
+  chainReaderK as any
 
 /**
  * @category combinators
@@ -874,9 +887,8 @@ export const chainFirstReaderK: <A, R, B>(
  */
 export const chainFirstReaderKW: <A, R1, B>(
   f: (a: A) => Reader<R1, B>
-) => <S, R2, E = never>(
-  ma: StateReaderTaskEither<S, R2, E, A>
-) => StateReaderTaskEither<S, R2, E, A> = chainFirstReaderK as any
+) => <S, R2, E = never>(ma: StateReaderTaskEither<S, R2, E, A>) => StateReaderTaskEither<S, R2, E, A> =
+  chainFirstReaderK as any
 
 /**
  * @category instances
@@ -1106,12 +1118,8 @@ export const bindW: <N extends string, A, S, R2, E2, B>(
   f: (a: A) => StateReaderTaskEither<S, R2, E2, B>
 ) => <R1, E1>(
   fa: StateReaderTaskEither<S, R1, E1, A>
-) => StateReaderTaskEither<
-  S,
-  R1 & R2,
-  E1 | E2,
-  { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }
-> = bind as any
+) => StateReaderTaskEither<S, R1 & R2, E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  bind as any
 
 // -------------------------------------------------------------------------------------
 // pipeable sequence S
@@ -1132,12 +1140,8 @@ export const apSW: <A, N extends string, S, R2, E2, B>(
   fb: StateReaderTaskEither<S, R2, E2, B>
 ) => <R1, E1>(
   fa: StateReaderTaskEither<S, R1, E1, A>
-) => StateReaderTaskEither<
-  S,
-  R1 & R2,
-  E1 | E2,
-  { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }
-> = apS as any
+) => StateReaderTaskEither<S, R1 & R2, E1 | E2, { readonly [K in keyof A | N]: K extends keyof A ? A[K] : B }> =
+  apS as any
 
 // -------------------------------------------------------------------------------------
 // array utils
@@ -1148,29 +1152,32 @@ export const apSW: <A, N extends string, S, R2, E2, B>(
  *
  * @since 2.11.0
  */
-export const traverseReadonlyNonEmptyArrayWithIndex = <A, S, R, E, B>(
-  f: (index: number, a: A) => StateReaderTaskEither<S, R, E, B>
-) => (as: ReadonlyNonEmptyArray<A>): StateReaderTaskEither<S, R, E, ReadonlyNonEmptyArray<B>> => (s) => (r) => () =>
-  _.tail(as).reduce<Promise<Either<E, [NonEmptyArray<B>, S]>>>(
-    (acc, a, i) =>
-      acc.then((ebs) =>
-        _.isLeft(ebs)
-          ? acc
-          : f(
-              i + 1,
-              a
-            )(ebs.right[1])(r)().then((eb) => {
-              if (_.isLeft(eb)) {
-                return eb
-              }
-              const [b, s] = eb.right
-              ebs.right[0].push(b)
-              ebs.right[1] = s
-              return ebs
-            })
-      ),
-    f(0, _.head(as))(s)(r)().then(E.map(([b, s]) => [[b], s]))
-  )
+export const traverseReadonlyNonEmptyArrayWithIndex =
+  <A, S, R, E, B>(f: (index: number, a: A) => StateReaderTaskEither<S, R, E, B>) =>
+  (as: ReadonlyNonEmptyArray<A>): StateReaderTaskEither<S, R, E, ReadonlyNonEmptyArray<B>> =>
+  (s) =>
+  (r) =>
+  () =>
+    _.tail(as).reduce<Promise<Either<E, [NonEmptyArray<B>, S]>>>(
+      (acc, a, i) =>
+        acc.then((ebs) =>
+          _.isLeft(ebs)
+            ? acc
+            : f(
+                i + 1,
+                a
+              )(ebs.right[1])(r)().then((eb) => {
+                if (_.isLeft(eb)) {
+                  return eb
+                }
+                const [b, s] = eb.right
+                ebs.right[0].push(b)
+                ebs.right[1] = s
+                return ebs
+              })
+        ),
+      f(0, _.head(as))(s)(r)().then(E.map(([b, s]) => [[b], s]))
+    )
 
 /**
  * Equivalent to `ReadonlyArray#traverseWithIndex(Applicative)`.

@@ -530,10 +530,7 @@ describe('Map', () => {
   })
 
   it('singleton', () => {
-    U.deepStrictEqual(
-      _.singleton('k1', 0),
-      new Map<string, number>([['k1', 0]])
-    )
+    U.deepStrictEqual(_.singleton('k1', 0), new Map<string, number>([['k1', 0]]))
   })
 
   it('getEq', () => {
@@ -1051,12 +1048,7 @@ describe('Map', () => {
     const m1 = new Map<User, string>([])
     U.deepStrictEqual(_.updateAt(eqUser)({ id: 'a' }, 'a')(m1), O.none)
     const m2 = new Map<User, string>([[{ id: 'a' }, 'b']])
-    U.deepStrictEqual(
-      _.updateAt(eqUser)({ id: 'a' }, 'a')(m2),
-      O.some(
-        new Map<User, string>([[{ id: 'a' }, 'a']])
-      )
-    )
+    U.deepStrictEqual(_.updateAt(eqUser)({ id: 'a' }, 'a')(m2), O.some(new Map<User, string>([[{ id: 'a' }, 'a']])))
   })
 
   it('modifyAt', () => {
@@ -1065,9 +1057,7 @@ describe('Map', () => {
     const m2 = new Map<User, number>([[{ id: 'a' }, 1]])
     U.deepStrictEqual(
       _.modifyAt(eqUser)({ id: 'a' }, (n: number) => n * 2)(m2),
-      O.some(
-        new Map<User, number>([[{ id: 'a' }, 2]])
-      )
+      O.some(new Map<User, number>([[{ id: 'a' }, 2]]))
     )
     // should not return the same reference if nothing changed
     const input: Map<string, number> = new Map([['a', 1]])
