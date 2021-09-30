@@ -74,9 +74,6 @@ jobs:
             npm ci
         fi
         $PACKAGE_MANAGER run build
-    - run: npx -y -p denoify@0.6.5 denoify_enable_short_npm_import_path
-      env:
-        DRY_RUN: "0"
     - run: |
         git config --global user.name "actions"
         git config --global user.email actions@example.com
