@@ -74,6 +74,9 @@ jobs:
             npm ci
         fi
         $PACKAGE_MANAGER run build
+    - run: npx -y -p denoify@0.10.4 remove_deno_dist_from_gitignore deno_dist
+      env:
+        DRY_RUN: "0"
     - run: |
         git config --global user.name "actions"
         git config --global user.email actions@example.com
