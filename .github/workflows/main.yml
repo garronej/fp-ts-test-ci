@@ -54,11 +54,11 @@ jobs:
         ref: ${{ github.ref }}
     - run: rm -r .github
     - run: |
-        git branch -d latest || true
-        git push origin :latest || true
+        git branch -d deno || true
+        git push origin :deno || true
     - run: |
-        git branch latest
-        git checkout latest
+        git branch deno
+        git checkout deno
     - uses: actions/setup-node@v2.1.3
       with:
         node-version: '15'
@@ -82,6 +82,6 @@ jobs:
         git config --global user.email actions@example.com
         git add -A
         git commit -am "Enabling shorter import paths"
-        git push origin latest
+        git push origin deno
 
 
